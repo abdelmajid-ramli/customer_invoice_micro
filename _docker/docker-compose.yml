@@ -1,0 +1,70 @@
+version: "3"
+#volumes:
+#  prometheus_data: {}
+  
+services:
+  maria:
+    image: mariadb
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    networks:
+      - micro-tp1-net
+
+  registry-service:
+    image: registry-tp1
+    ports:
+      - "8761:8761"
+    networks:
+      - micro-tp1-net
+
+  customer-service:
+    image: customer-tp1
+#    environment:
+#      - JAVA_OPTS=
+#        -DEUREKA_SERVER=http://registry-service:8761/eureka
+#        -Ddbname=maria
+#        -Dpassword=user
+#        -Dpassword=user
+    ports:
+      - "8081:8081"
+    depends_on:
+      - maria
+      - registry-service
+    networks:
+      - micro-tp1-net
+
+  invoice-service:
+    image: invoice-tp1
+#    environment:
+#      - JAVA_OPTS=
+#        -DEUREKA_SERVER=http://registry-service:8761/eureka
+#        -Ddbname=maria
+#        -Dusername=user
+#        -Dpassword=user
+    ports:
+      - "8082:8082"
+    depends_on:
+      - maria
+      - registry-service
+    networks:
+      - micro-tp1-net
+
+
+#  gateway-service:
+#    image: gateway-tp1
+##    environment:
+##      - JAVA_OPTS=
+##        -DEUREKA_SERVER=http://registry-service:8761/eureka
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - registry-service
+#      - customer-service
+#      - invoice-service
+#    networks:
+#      - micro-tp1-net
+
+networks:
+  micro-tp1-net:
